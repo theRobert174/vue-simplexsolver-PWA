@@ -21,13 +21,16 @@
 
 <script>
 /* eslint-disable*/
-import { IonCard, IonGrid, IonRow, IonCol, IonItem, IonSelect, IonSelectOption, IonLabel, IonList } from '@ionic/vue';
+import { IonCard, IonGrid, IonRow, IonCol, IonItem, IonSelect, IonSelectOption, IonLabel, IonList, IonCardTitle, IonCardHeader, IonCardContent } from '@ionic/vue';
 import MyTable from '@/components/Table.vue'
 import FormEquation from '@/components/FormEquation.vue'
 export default {
         name: 'TableView',
         components: {
         IonCard,
+        IonCardHeader,
+        IonCardTitle,
+        IonCardContent,
         IonGrid,
         IonRow,
         IonCol,

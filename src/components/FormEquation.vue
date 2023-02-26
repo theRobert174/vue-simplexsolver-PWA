@@ -15,8 +15,9 @@
                 type="text"
                 v-model="input.value"
                 @input="adjustWidth($event.target)"
-                @keydown.enter="addInput(index + 1)"
-                @keydown.right="addInput(index + 1)"
+                @keyup="onKeyUp(index,$event)"
+                @keydown="onKeyDown(index,$event)"
+                @keydown.right="addInput(index)"
                 @keydown.backspace="deleteInput(index)"
                 ref="inputRefs"
                 :style="{ 'min-width': '5px', 'width': input.width + 'px' }"
@@ -27,11 +28,16 @@
 </template>
 
 <script>
+import { IonLabel } from '@ionic/vue';
 export default {
-    name: "FormEquation",
+    name: 'FormEquation',
+    components:{
+        IonLabel
+    },
     data(){
         return{
             selectedOption: 'min',
+            delayI: -1,
             inputs: [
                 {
                     id: 1,
@@ -45,49 +51,67 @@ export default {
         }
     },
     methods: {
+        //Ajusta el grosor de cada input en relación a su contenido
+        adjustWidth(input) {
+            input.style.width = '1px';
+            input.style.width = `${input.scrollWidth}px`;
+        },
+        //Añade un input al final del lado derecho
         addInput(index) {
-            if ((this.inputs[index - 1].value !== '') && (index <= 9) && (this.inputs.length === index)) {
-                console.log(this.inputs.length, index)
+            const inpAct = this.$refs.inputRefs[index]//input Actual
+            //Si el input Actual no tiene nada o esta en la pos final y la cant de inputs es menor o igual a 9 y el total de inputs es igual a la cant existentes
+            if ((inpAct.value === '' || inpAct.selectionEnd === inpAct.value.length) && (index + 1 <= 9) && (this.inputs.length === index + 1)) {
                 const newId = this.inputs.length + 1;
                 const newInput = {
                     id: newId,
                     value: ''
                 };
-                this.inputs.splice(index, 0, newInput);
+                this.inputs.splice(index + 1, 0, newInput);
                 this.$nextTick(() => {
-                    this.$refs.inputRefs[index].focus();
+                    this.$refs.inputRefs[index + 1].focus();
                 });
             }
         },
-        adjustWidth(input) {
-            input.style.width = '1px';
-            input.style.width = `${input.scrollWidth}px`;
-        },
+        //Borra inputs
         deleteInput(index) {
+            //Si la cantidad de inputs es mayor a dos
             if (this.inputs.length > 2) {
-                if (index === this.inputs.length - 1 && this.inputs[index].value === '' && event.keyCode === 8) {
+                
+                if (index === this.inputs.length - 1 && this.inputs[index].value === '') {
                     this.inputs.splice(index, 1);
                     this.$refs.inputRefs[index - 1].focus();
-                } else if (index !== 0 && this.inputs[index].value === '' && event.keyCode === 8) {
+                } else if (index !== 0 && this.inputs[index].value === '') {
                     this.inputs.splice(index, 1);
                     this.$refs.inputRefs[index - 1].focus();
                 }
             }
         },
-        /*navigateInputs(direction, index) {
-            if (direction === 'right' && this.inputs[index].value === '') {
-                if (index === this.inputs.length - 1) {
-                    this.addInput(index + 1);
-                } else {
-                    this.$refs.inputRefs[index + 1].focus();
-                }
-            } else if (direction === 'left' && this.inputs[index].value === '') {
-                if (index !== 0) {
-                    this.$refs.inputRefs[index - 1].focus();
-                    this.deleteInput(index);
+        onKeyUp(index,event){
+            const {target, code} = event
+            const {selectionStart} = target
+            //Si presiona flecha izq y el input no es 0 y la pos del texto es 0
+            if(code === "ArrowLeft" && index!==0 && selectionStart === 0){
+                if(selectionStart === this.delayI){
+                    const inpAnt = this.$refs.inputRefs[index - 1]//referente a un input anterior
+                    const end = inpAnt.value.length//largo del contenido del input anterior
+                    inpAnt.focus();//Se enfoca en el input anterior
+                    inpAnt.setSelectionRange(end, end, "forward")// Se posiciona al final del contenido del input anterior
+                    this.delayI--
+                }else{this.delayI++}
+            }
+            
+        },
+        onKeyDown(index,event){
+            const {code} = event
+            //Si presiona flecha der y el input no es el ultimo
+            if(code === "ArrowRight" && index !== this.inputs.length){
+                const inpAct = this.$refs.inputRefs[index]//referente al input actual
+                //Si existe un input a la derecha y si la pos del input actual es la final
+                if((index + 1 < this.inputs.length) && (inpAct.value.length === inpAct.selectionEnd)){
+                    this.$refs.inputRefs[index + 1].focus(); //Se enfoca en el proximo input
                 }
             }
-        }*/
+        }
     },
 }
 </script>

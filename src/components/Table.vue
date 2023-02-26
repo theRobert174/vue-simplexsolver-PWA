@@ -14,7 +14,7 @@
                 <td>{{ index }}</td>
                 <td>z</td>
                 <td>1</td>
-                <td><frac>1<sub>2</sub></frac></td>
+                <!-- <td><frac>1<sub>2</sub></frac></td> -->
                 <td><span>1</span>/<sub>2</sub></td>
                 <td><sup>5</sup>&frasl;<sub>9</sub></td>
                 <td>1<sup>1</sup>&frasl;<sub>2</sub></td>
