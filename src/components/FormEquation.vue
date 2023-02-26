@@ -20,11 +20,18 @@
                 @keydown.right="addInput(index)"
                 @keydown.backspace="deleteInput(index)"
                 ref="inputRefs"
-                :style="{ 'min-width': '5px', 'width': input.width + 'px' }"
             />
             <label :for="'input-' + input.id">x<sub>{{ input.id }}</sub></label>
         </div>
     </div>
+    <div class="rest-text">
+        <ion-label>s.a.</ion-label>
+    </div>
+    <!-- <div class="rest-row" v-for="(res, index) in restrictions" :key="res.id">
+        <div class="rest-cell">
+
+        </div>
+    </div> -->
 </template>
 
 <script>
@@ -47,7 +54,29 @@ export default {
                     id: 2,
                     value: ''
                 }
-            ]
+            ],
+            restrictions:[{
+                r1:[
+                    {
+                        id:1,
+                        value:''
+                    },
+                    {
+                        id:2,
+                        value:''
+                    }
+                ],
+                r2:[
+                    {
+                        id:1,
+                        value:''
+                    },
+                    {
+                        id:2,
+                        value:''
+                    }
+                ]
+            }]
         }
     },
     methods: {
@@ -76,12 +105,12 @@ export default {
         deleteInput(index) {
             //Si la cantidad de inputs es mayor a dos
             if (this.inputs.length > 2) {
-                
+                //Si es el ultimo input y su contenido esta vacio
                 if (index === this.inputs.length - 1 && this.inputs[index].value === '') {
                     this.inputs.splice(index, 1);
                     this.$refs.inputRefs[index - 1].focus();
+                    //si no es el primer input y su contenido esta vacio
                 } else if (index !== 0 && this.inputs[index].value === '') {
-                    this.inputs.splice(index, 1);
                     this.$refs.inputRefs[index - 1].focus();
                 }
             }
@@ -121,15 +150,16 @@ export default {
   display: flex; /* Alineamos los elementos en fila */
   align-items: center; /* Centramos verticalmente los elementos */
 }
-input{
-    margin-right: 5px;
-}
 .input-container {
     display: flex;
 }
 .input-container input {
-    width: 1ch;
-    min-width: 50px; /* o cualquier otro valor que funcione para tu caso específico */
+    width: 5px;
+    min-width: 5px; /* o cualquier otro valor que funcione para tu caso específico */
     margin-right: 5px;
+}
+.rest-text{
+    float: left;
+    padding-left: 3rem;
 }
 </style>
